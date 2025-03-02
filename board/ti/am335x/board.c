@@ -83,9 +83,6 @@ void do_board_detect(void)
 {
 	enable_i2c0_pin_mux();
 	enable_i2c2_pin_mux();
-	if (ti_i2c_eeprom_am_get(CONFIG_EEPROM_BUS_ADDRESS,
-				 CONFIG_EEPROM_CHIP_ADDRESS))
-		printf("ti_i2c_eeprom_init failed\n");
 }
 #endif
 
@@ -157,115 +154,6 @@ static int probe_cape_eeprom(struct am335x_cape_eeprom_id *cape_header)
 		virtual_audio=BBB_TDA998X_AUDIO;
 		virtual_wireless=NOT_POP;
 		name = "A335BNLT";
-
-		if (!strncmp(board_ti_get_rev(), "BLA", 3)) {
-			puts("Model: BeagleBoard.org BeagleBone Blue:\n");
-			/* Special case */
-			base_dtb=BBBL_BASE_DTB;
-			virtual_emmc=NOT_POP;
-			virtual_video=NOT_POP;
-			virtual_audio=NOT_POP;
-			virtual_wireless=NOT_POP;
-			name = "BBBL";
-		}
-		if (!strncmp(board_ti_get_rev(), "BW", 2)) {
-			puts("Model: BeagleBoard.org BeagleBone Black Wireless:\n");
-			virtual_wireless=BBBW_WL1835;
-			name = "BBBW";
-		}
-		if (!strncmp(board_ti_get_rev(), "BBG", 3)) {
-			/* catches again in board_is_bbg1() */
-			//puts("Model: SeeedStudio BeagleBone Green:\n");
-			virtual_video=NOT_POP;
-			virtual_audio=NOT_POP;
-			name = "BBG1";
-			model=M_BBG1;
-		}
-		if (!strncmp(board_ti_get_rev(), "GW1", 3)) {
-			puts("Model: SeeedStudio BeagleBone Green Wireless:\n");
-			base_dtb=BBGW_BASE_DTB;
-			virtual_video=NOT_POP;
-			virtual_audio=NOT_POP;
-			virtual_wireless=BBGW_WL1835;
-		}
-		if (!strncmp(board_ti_get_rev(), "GG1", 3)) {
-			puts("Model: SeeedStudio BeagleBone Green Gateway:\n");
-			virtual_video=NOT_POP;
-			virtual_audio=NOT_POP;
-			virtual_wireless=BBGG_WL1835;
-			model=M_BBGG;
-		}
-		if (!strncmp(board_ti_get_rev(), "AIA", 3)) {
-			puts("Model: Arrow BeagleBone Black Industrial:\n");
-			virtual_video=BBB_ADV7511_AUDIO;
-			virtual_audio=BBB_ADV7511_AUDIO;
-		}
-		if (!strncmp(board_ti_get_rev(), "EIA", 3)) {
-			puts("Model: BeagleBone Black Industrial:\n");
-		}
-		if (!strncmp(board_ti_get_rev(), "SE", 2)) {
-			char subtype_id = board_ti_get_config()[1];
-			switch (subtype_id) {
-				case 'L':
-					name = "BBELITE";
-					base_dtb=BBEL_BASE_DTB;
-					virtual_video=NOT_POP;
-					virtual_audio=NOT_POP;
-					break;
-				case 'I':
-					name = "BBE_EX_WIFI";
-					base_dtb=BBE_EX_WIFI_BASE_DTB;
-					virtual_video=NOT_POP;
-					virtual_audio=NOT_POP;
-					break;
-				default:
-					name = "BBEN";
-					base_dtb=BBE_BASE_DTB;
-			}
-		}
-		if (!strncmp(board_ti_get_rev(), "ME0", 3)) {
-			puts("Model: MENTOREL BeagleBone uSomIQ:\n");
-			virtual_video=NOT_POP;
-			virtual_audio=NOT_POP;
-		}
-		if (!strncmp(board_ti_get_rev(), "NAD", 3)) {
-			puts("Model: Neuromeka BeagleBone Air:\n");
-		}
-		if (!strncmp(board_ti_get_rev(), "OS0", 3)) {
-			unsigned char rev = board_ti_get_rev()[3];
-			puts("Model: Octavo Systems OSD3358-SM-RED:\n");
-			switch (rev) {
-			case 0x31: /* 1 */
-				name = "OS01";
-				model=M_OS01;
-				break;
-			default: /* 0 */
-				name = "OS00";
-				model=M_OS00;
-				break;
-			}
-		}
-	}
-
-	if (board_is_bone()) {
-		puts("Model: BeagleBone:\n");
-		base_dtb=BB_BASE_DTB;
-		virtual_emmc=NOT_POP;
-		virtual_video=NOT_POP;
-		virtual_audio=NOT_POP;
-		virtual_wireless=NOT_POP;
-		name = "A335BONE";
-	}
-
-	if (board_is_bbg1()) {
-		puts("Model: SeeedStudio BeagleBone Green:\n");
-		base_dtb=BBB_BASE_DTB;
-		virtual_emmc=BBB_EMMC;
-		virtual_video=NOT_POP;
-		virtual_audio=NOT_POP;
-		virtual_wireless=NOT_POP;
-		name = "BBG1";
-		model=M_BBG1;
 	}
 
 	set_board_info_env(name);

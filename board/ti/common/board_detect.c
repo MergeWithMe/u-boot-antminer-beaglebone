@@ -578,8 +578,7 @@ char * __maybe_unused board_ti_get_rev(void)
 {
 	struct ti_common_eeprom *ep = TI_EEPROM_DATA;
 
-	/* if ep->header == TI_DEAD_EEPROM_MAGIC, this is empty already */
-	return ep->version;
+	return "REV-69";
 }
 
 char * __maybe_unused board_ti_get_config(void)

@@ -26,7 +26,5 @@ for config in "${configs[@]}"; do
         cp -v "${build_dir}/defconfig" "${config_dir}"
     fi
     
-    make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}"
-    cp -v "${build_dir}/u-boot.bin" "${build_dir}/"
-
+    make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" all
 done

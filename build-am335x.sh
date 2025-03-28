@@ -2,38 +2,31 @@
 
 sys=$(uname -m)
 
-#add: bc bison flex libssl-dev u-boot-tools binutils gcc
-
+# Required dependencies: bc bison flex libssl-dev u-boot-tools binutils gcc
 DIR="$PWD"
 
-config="am335x_evm_defconfig"
+configs=("am335x_evm_defconfig" "am335x_evm_defconfig_netboot")
 
 if [ ! -f ./load.menuconfig ] ; then
-	echo "Developers: too make changes: [touch load.menuconfig]"
+    echo "Developers: to make changes: [touch load.menuconfig]"
 fi
 
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
+for config in "${configs[@]}"; do
+    build_dir="build_${config}"
+    config_dir="configs/${config}"
+    
+    mkdir -p "${build_dir}"
+    
+    make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" distclean
+    make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" "${config}"
+    
+    if [ -f "load.menuconfig" ]; then
+        make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" menuconfig
+        make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" savedefconfig
+        cp -v "${build_dir}/defconfig" "${config_dir}"
+    fi
+    
+    make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}"
+    cp -v "${build_dir}/u-boot.bin" "${build_dir}/"
 
-if [ "x${sys}" = "xarmv7l" ] ; then
-	if [ -f ./load.menuconfig ] ; then
-		make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- ${config}
-		make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
-		make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- savedefconfig
-		cp -v defconfig ./configs/${config}
-		make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
-	fi
-
-	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- ${config}
-	make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf-
-else
-	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- ${config}
-
-	if [ -f ./load.menuconfig ] ; then
-		make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
-	fi
-
-	make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf-
-
-	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- savedefconfig
-	cp -v defconfig ./configs/${config}
-fi
+done

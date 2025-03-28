@@ -28,3 +28,8 @@ for config in "${configs[@]}"; do
     
     make ARCH=arm -j2 CROSS_COMPILE=arm-linux-gnueabihf- O="${build_dir}" all
 done
+
+cp build_am335x_evm_defconfig/u-boot.img ../tftpboot/u-boot.img
+cp build_am335x_evm_defconfig_netboot/u-boot.img ../tftpboot/u-boot-restore.img
+cp build_am335x_evm_defconfig/MLO ../tftpboot/MLO
+cp build_am335x_evm_defconfig_netboot/spl/u-boot-spl.bin ../tftpboot/u-boot-spl-restore.bin
